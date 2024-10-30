@@ -29,6 +29,7 @@ class OrderController extends Controller
     public function store(StoreOrderRequest $request)
     {
         // Agrupar las cantidades de los productos seleccionados
+        // prueba commit
         $productQuantities = [];
         foreach ($request->input('products') as $product) {
             if (!isset($productQuantities[$product['id']])) {
