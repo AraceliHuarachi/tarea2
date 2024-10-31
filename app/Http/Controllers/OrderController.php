@@ -7,9 +7,12 @@ use App\Models\Client;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Services\OrderService;
 
 class OrderController extends Controller
 {
+    protected $orderService;
+
     public function index()
     {
 
@@ -26,43 +29,15 @@ class OrderController extends Controller
         return view('orders.create', compact('clients', 'products', 'validationRules'));
     }
 
+    public function __construct(OrderService $orderService)
+    {
+        $this->orderService = $orderService;
+    }
+
     public function store(StoreOrderRequest $request)
     {
-        // Agrupar las cantidades de los productos seleccionados
-        // prueba commit
-        $productQuantities = [];
-        foreach ($request->input('products') as $product) {
-            if (!isset($productQuantities[$product['id']])) {
-                $productQuantities[$product['id']] = 0;
-            }
-            $productQuantities[$product['id']] += $product['quantity'];
-        }
+        $this->orderService->createOrder($request->all());
 
-        // Calcular el total
-        $total = 0;
-        foreach ($productQuantities as $productId => $quantity) {
-            $productPrice = Product::find($productId)->price;
-            $total += $productPrice * $quantity;
-        }
-
-        // Crear el nuevo pedido
-        $order = Order::create([
-            'client_id' => $request->input('client_id'),
-            'order_date' => now(),
-            'total' => $request->input('total'),
-        ]);
-        // print_r($request->all());
-        // die("hola");
-
-        // Asociar los productos al pedido   
-        $products = [];
-        foreach ($productQuantities as $productId => $quantity) {
-            $products[$productId] = [
-                'quantity' => $quantity,
-                'price' => Product::find($productId)->price,
-            ];
-        }
-        $order->products()->attach($products);
         return redirect()->route('orders.index')->with('success', 'Order added successfully.');
     }
 
