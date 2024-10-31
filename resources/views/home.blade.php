@@ -11,7 +11,7 @@
 
 <body>
     <div class="max-w-4xl mx-auto px-4">
-        <h1 style="text-align: center;">Welcome to the Main Page</h1>
+        <h1 style="text-align: center;">Main Page changed at home</h1>
     </div>
 
     <a href="/categories">Categories List -></a>
