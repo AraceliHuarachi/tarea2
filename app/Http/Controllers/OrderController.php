@@ -36,7 +36,11 @@ class OrderController extends Controller
 
     public function store(StoreOrderRequest $request)
     {
-        $this->orderService->createOrder($request->all());
+        // Extraer client_id y productos del request
+        $clientId = $request->input('client_id');
+        $productsData = $request->input('products');
+        // Llamar al servicio con los datos extraídos
+        $this->orderService->createOrder($clientId, $productsData);
 
         return redirect()->route('orders.index')->with('success', 'Order added successfully.');
     }
